@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">MVPTest</string>
     <string name="title_activity_base">BaseActivity</string>
+
+    <string name="load_err">加载失败,点击重试</string>
 </resources>

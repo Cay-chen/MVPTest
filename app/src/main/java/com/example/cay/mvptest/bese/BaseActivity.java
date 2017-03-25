@@ -1,39 +1,45 @@
 package com.example.cay.mvptest.bese;
 
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import com.example.cay.mvptest.R;
+import com.example.cay.mvptest.utils.ActivityCollector;
 
-public class BaseActivity extends AppCompatActivity {
-    private static final String TAG = "Cay";
+public abstract class BaseActivity extends AppCompatActivity {
+    protected static final String TAG = "Cay";
+    protected FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
         initToolbar();
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        //添加到管理器
+        ActivityCollector.addActivity(this);
 
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        View view = LayoutInflater.from(this).inflate(setContentLayout(), null);
+        view.setLayoutParams(layoutParams);
+        FrameLayout frameLayout = (FrameLayout) findViewById(R.id.fr_content);
+        frameLayout.addView(view);
     }
+
+    protected abstract int setContentLayout();
 
     private void initToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.icon_back);
+        toolbar.setTitle(setToolbarTitle());
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -43,7 +49,19 @@ public class BaseActivity extends AppCompatActivity {
         });
     }
 
-    private void setToolbarTitle(String title) {
+    /**
+     * 设置toolbartitle
+     *
+     * @return toolbar的值
+     */
+    protected CharSequence setToolbarTitle() {
+        return null;
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //移除Activity管理
+        ActivityCollector.removieActivity(this);
     }
 }
